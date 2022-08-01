@@ -17,5 +17,29 @@ namespace spg
             InitializeComponent();
         }
 
+        private void checkSortByIndustry_CheckedChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void checkSortTrain_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void trainLengthControl_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void editBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void newPuzzleBtn_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
