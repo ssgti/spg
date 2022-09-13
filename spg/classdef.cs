@@ -32,11 +32,4 @@ namespace spg
             return false; // vehicle not added
         }
     }
-
-    public class menuOptions
-    {
-        public bool sortByIndustry { get; set; }
-        public bool sortTrain { get; set; }
-        public int totalVehicles { get;set; }
-    }
 }

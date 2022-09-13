@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace spg
 {
@@ -11,23 +12,110 @@ namespace spg
         [STAThread]
         static void Main()
         {
+            distributeVehicles();
+
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new menu());
-
-            distributeVehicles();
         }
+        public static bool sortByIndustry { get; set; }
+        public static bool sortTrain { get; set; }
+        public static int totalVehicles { get; set; }
+
+        public static List<railVehicle> train = new List<railVehicle>();
+        public static List<railVehicle> vehicles = new List<railVehicle>();
+        public static List<siding> sidings = new List<siding>();
 
         static (List<railVehicle>, List<siding>) getFromFile()
         {
-            string[,] vData = null;
-            string[,] sData = null;
-            List<railVehicle> vehicles = new List<railVehicle>();
-            List<siding> sidings = new List<siding>();
+            //string[,] vData = null;
+            //string[,] sData = null;
 
-            /// read from file, store in data as 2D array
-            
+            string[] items = File.ReadAllLines("data.txt");
+            foreach(string item in items)
+            {
+                if (item[0] == 'v') // first char used to identify vehicle or siding
+                {
+                    string data = "";
+                    string ID = "";
+                    bool gotID = false;
+                    string industryType = "";
+                    bool gotIndType = false;
+                    double length = 0;
+                    bool gotLen = false;
+
+                    foreach (char letter in item) // reading
+                    {
+                        if (letter != ',') // data items are split by commas
+                        {
+                            data.Append(letter);
+                        }
+                        else
+                        {
+                            if (!gotID) // does these in order hopefully?
+                            {
+                                ID = data;
+                            }
+                            else if (!gotIndType)
+                            {
+                                industryType = data;
+                            }
+                            else if (!gotLen)
+                            {
+                                length = double.Parse(data);
+                            }
+                            data = "";
+                            railVehicle vehicle = new railVehicle();
+                            vehicle.vID = ID;
+                            vehicle.vIndustryType = industryType;
+                            vehicle.vLength = length;
+                            vehicles.Add(vehicle);
+                        }
+                    }
+                }
+                else if (item[0] == 's')
+                {
+                    string data = "";
+                    string ID = "";
+                    bool gotID = false;
+                    string industryType = "";
+                    bool gotIndType = false;
+                    double length = 0;
+                    bool gotLen = false;
+
+                    foreach (char letter in item)
+                    {
+                        if (letter != ',')
+                        {
+                            data.Append(letter);
+                        }
+                        else
+                        {
+                            if (!gotID)
+                            {
+                                ID = data;
+                            }
+                            else if (!gotIndType)
+                            {
+                                industryType = data;
+                            }
+                            else if (!gotLen)
+                            {
+                                length = double.Parse(data);
+                            }
+                            data = "";
+                            siding siding = new siding();
+                            siding.sID = ID;
+                            siding.sIndustryType = industryType;
+                            siding.sLength = length;
+                            sidings.Add(siding);
+                        }
+                    }
+                }
+            }
+
+            /* the two dimensional arrays weren't needed apparently
             for (int x = 0; x <= vData.Length; x++)
             {
                 railVehicle vehicle = new railVehicle();
@@ -44,6 +132,7 @@ namespace spg
                 siding.sLength = double.Parse(sData[x, 2]);
                 sidings.Add(siding);
             }
+            */
 
             return (vehicles, sidings);
         }
@@ -53,8 +142,7 @@ namespace spg
             var items = getFromFile();
             List<railVehicle> vehicles = items.Item1;
             List<siding> sidings = items.Item2;
-            int totalVehicles = vehicles.Count; // toggle in UI
-            bool sortByIndustry = true; // toggle in UI
+            totalVehicles = vehicles.Count;
             List<railVehicle> assignedVehicles = new List<railVehicle>();
 
             if (sortByIndustry)
@@ -94,8 +182,6 @@ namespace spg
 
         static void createTrain(List<railVehicle> assignedVehicles)
         {
-            List<railVehicle> train = new List<railVehicle>();
-            bool sortTrain = true; // toggle in UI
             if (sortTrain)
             {
                 Dictionary<string, List<railVehicle>> industries = new Dictionary<string, List<railVehicle>>();
