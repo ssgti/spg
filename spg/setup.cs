@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace spg
 {
@@ -113,7 +114,16 @@ namespace spg
 
         private void saveBtn_Click(object sender, EventArgs e)
         {
-
+            StreamWriter save = new StreamWriter(Program.filePath);
+            File.WriteAllText(Program.filePath, String.Empty);
+            foreach(railVehicle vehicle in Program.vehicles)
+            {
+                save.WriteLine("v," + vehicle.vID + "," + vehicle.vIndustryType + "," + vehicle.vLength);
+            }
+            foreach (siding siding in Program.sidings)
+            {
+                save.WriteLine("v," + siding.sID + "," + siding.sIndustryType + "," + siding.sLength);
+            }
         }
 
         private void vehicleRBtn_CheckedChanged(object sender, EventArgs e)
