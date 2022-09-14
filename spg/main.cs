@@ -27,91 +27,102 @@ namespace spg
         public static List<railVehicle> vehicles = new List<railVehicle>();
         public static List<siding> sidings = new List<siding>();
 
+        public static string filePath = "data.txt";
+
         static (List<railVehicle>, List<siding>) getFromFile()
         {
             //string[,] vData = null;
             //string[,] sData = null;
-
-            string[] items = File.ReadAllLines("data.txt");
-            foreach(string item in items)
+            if (File.Exists(filePath))
             {
-                if (item[0] == 'v') // first char used to identify vehicle or siding
+                string[] items = File.ReadAllLines(filePath);
+                try
                 {
-                    string data = "";
-                    string ID = "";
-                    bool gotID = false;
-                    string industryType = "";
-                    bool gotIndType = false;
-                    double length = 0;
-                    bool gotLen = false;
-
-                    foreach (char letter in item) // reading
+                    foreach (string item in items)
                     {
-                        if (letter != ',') // data items are split by commas
+                        if (item[0] == 'v') // first char used to identify vehicle or siding
                         {
-                            data.Append(letter);
+                            string data = "";
+                            string ID = "";
+                            bool gotID = false;
+                            string industryType = "";
+                            bool gotIndType = false;
+                            double length = 0;
+                            bool gotLen = false;
+
+                            foreach (char letter in item) // reading
+                            {
+                                if (letter != ',') // data items are split by commas - type,id,indtype,len
+                                {
+                                    data.Append(letter);
+                                }
+                                else
+                                {
+                                    if (!gotID) // does these in order hopefully?
+                                    {
+                                        ID = data;
+                                    }
+                                    else if (gotID && !gotIndType)
+                                    {
+                                        industryType = data;
+                                    }
+                                    else if (gotID && gotIndType && !gotLen)
+                                    {
+                                        length = double.Parse(data);
+                                    }
+                                    data = "";
+                                    railVehicle vehicle = new railVehicle();
+                                    vehicle.vID = ID;
+                                    vehicle.vIndustryType = industryType;
+                                    vehicle.vLength = length;
+                                    vehicles.Add(vehicle);
+                                }
+                            }
                         }
-                        else
+                        else if (item[0] == 's')
                         {
-                            if (!gotID) // does these in order hopefully?
+                            string data = "";
+                            string ID = "";
+                            bool gotID = false;
+                            string industryType = "";
+                            bool gotIndType = false;
+                            double length = 0;
+                            bool gotLen = false;
+
+                            foreach (char letter in item)
                             {
-                                ID = data;
+                                if (letter != ',')
+                                {
+                                    data.Append(letter);
+                                }
+                                else
+                                {
+                                    if (!gotID)
+                                    {
+                                        ID = data;
+                                    }
+                                    else if (gotID && !gotIndType)
+                                    {
+                                        industryType = data;
+                                    }
+                                    else if (gotID && gotIndType && !gotLen)
+                                    {
+                                        length = double.Parse(data);
+                                    }
+                                    data = "";
+                                    siding siding = new siding();
+                                    siding.sID = ID;
+                                    siding.sIndustryType = industryType;
+                                    siding.sLength = length;
+                                    sidings.Add(siding);
+                                }
                             }
-                            else if (!gotIndType)
-                            {
-                                industryType = data;
-                            }
-                            else if (!gotLen)
-                            {
-                                length = double.Parse(data);
-                            }
-                            data = "";
-                            railVehicle vehicle = new railVehicle();
-                            vehicle.vID = ID;
-                            vehicle.vIndustryType = industryType;
-                            vehicle.vLength = length;
-                            vehicles.Add(vehicle);
                         }
                     }
                 }
-                else if (item[0] == 's')
+                catch
                 {
-                    string data = "";
-                    string ID = "";
-                    bool gotID = false;
-                    string industryType = "";
-                    bool gotIndType = false;
-                    double length = 0;
-                    bool gotLen = false;
-
-                    foreach (char letter in item)
-                    {
-                        if (letter != ',')
-                        {
-                            data.Append(letter);
-                        }
-                        else
-                        {
-                            if (!gotID)
-                            {
-                                ID = data;
-                            }
-                            else if (!gotIndType)
-                            {
-                                industryType = data;
-                            }
-                            else if (!gotLen)
-                            {
-                                length = double.Parse(data);
-                            }
-                            data = "";
-                            siding siding = new siding();
-                            siding.sID = ID;
-                            siding.sIndustryType = industryType;
-                            siding.sLength = length;
-                            sidings.Add(siding);
-                        }
-                    }
+                    // file is empty or contains erroneous data
                 }
             }
 
