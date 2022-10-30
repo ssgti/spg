@@ -1,0 +1,8 @@
+# shunt puzzle generator
+[temporary README, program not finished/usable yet]
+
+creates shunting puzzles for model railways or train simulators with user-defined siding and vehicle lengths and industry types, enabling it to be fully versatile i.e. not limited to a certain type of railway stock. vehicle types and sidings are defined on the fly as objects and arbitrary measurement units are used to mitigate the need for manual measurement - length is measured in terms of the user's shortest rail vehicle, where this vehicle's length is 1 and a vehicle twice as long would have a length of 2 etc.
+
+each vehicle defined by the user is initialised as a new object, and sidings are initialised as lists. the vehicles are then distributed among the sidings according to the user's distribution settings and the length of the sidings - a vehicle will not be added to a siding it does not fit in. then a train will be created out of all the vehicles that have successfully been distributed, which the user will assemble on their layout or simulator and shunt them into their sidings as specified by the program.
+
+options for fully random or pseudo-random vehicle distribution in both the user's train and sidings are provided. pseudo-random distribution means that the industry type defined in the vehicles and sidings will be taken into account. when enabled for sidings, wagons that have the same industry type as a certain siding have a greater likelihood of being sorted into that siding (i.e. a stone wagon is more likely to be assigned to a siding that serves a quarry). when enabled for train generation, vehicles that have the same industry type are added to the train adjacent to each other - this may be selected for either aesthetic reasons or to make the puzzle easier.
